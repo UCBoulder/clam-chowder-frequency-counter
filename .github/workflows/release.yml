@@ -39,13 +39,13 @@ jobs:
           
           mkdir -p AppDir/usr/share/applications
           cat > AppDir/usr/share/applications/clam-chowder.desktop <<EOF
-[Desktop Entry]
-Type=Application
-Name=Clam Chowder
-Exec=clam-chowder
-Icon=clam-chowder
-Categories=Utility;
-EOF
+          [Desktop Entry]
+          Type=Application
+          Name=Clam Chowder
+          Exec=clam-chowder
+          Icon=clam-chowder
+          Categories=Utility;
+          EOF
 
           mkdir -p AppDir/usr/share/icons/hicolor/256x256/apps
           cp clam_chowder/assets/red.jpg AppDir/usr/share/icons/hicolor/256x256/apps/clam-chowder.png || true
