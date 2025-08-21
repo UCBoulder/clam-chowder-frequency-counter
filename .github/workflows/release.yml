@@ -1,4 +1,4 @@
-name: Build and Release
+name: Build and Release (Windows only)
 
 on:
   push:
@@ -6,11 +6,8 @@ on:
       - "v*"   # triggers only for version tags like v1.0.0
 
 jobs:
-  build:
-    strategy:
-      matrix:
-        os: [windows-latest]
-    runs-on: ${{ matrix.os }}
+  build-windows:
+    runs-on: windows-latest
 
     steps:
       - name: Checkout repository
@@ -28,25 +25,22 @@ jobs:
           pip install pyinstaller
 
       - name: Build executable
-        run: |
-          pyinstaller --onefile --noconsole --icon clam-chowder/soup.ico main.py
+        run: pyinstaller --onefile --noconsole --icon clam-chowder/soup.ico main.py
 
       - name: Prepare release folder
         run: |
           mkdir release
-          if [ "${{ runner.os }}" = "Windows" ]; then
-            mv dist/main.exe release/clam-chowder-Windows.exe
-          fi
+          mv dist/main.exe release/clam-chowder-Windows.exe
         shell: bash
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: clam-chowder-${{ runner.os }}
+          name: clam-chowder-windows
           path: release/*
 
   release:
-    needs: build
+    needs: build-windows
     runs-on: ubuntu-latest
 
     steps:
