@@ -9,7 +9,7 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [windows-latest]
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -31,40 +31,11 @@ jobs:
         run: |
           pyinstaller --onefile --noconsole --icon clam-chowder/soup.ico main.py
 
-      - name: Package for Linux (AppImage)
-        if: runner.os == 'Linux'
-        run: |
-          mkdir -p AppDir/usr/bin
-          cp dist/main AppDir/usr/bin/clam-chowder
-          
-          mkdir -p AppDir/usr/share/applications
-          cat > AppDir/usr/share/applications/clam-chowder.desktop <<EOF
-          [Desktop Entry]
-          Type=Application
-          Name=Clam Chowder
-          Exec=clam-chowder
-          Icon=clam-chowder
-          Categories=Utility;
-          EOF
-
-          mkdir -p AppDir/usr/share/icons/hicolor/256x256/apps
-          cp clam_chowder/assets/red.jpg AppDir/usr/share/icons/hicolor/256x256/apps/clam-chowder.png || true
-
-          wget -q https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage -O appimagetool
-          chmod +x appimagetool
-
-          # Use non-mounting mode to avoid hang
-          ./appimagetool --appimage-extract-and-run AppDir clam-chowder-Linux.AppImage
-
       - name: Prepare release folder
         run: |
           mkdir release
           if [ "${{ runner.os }}" = "Windows" ]; then
             mv dist/main.exe release/clam-chowder-Windows.exe
-          elif [ "${{ runner.os }}" = "macOS" ]; then
-            mv dist/main release/clam-chowder-macOS
-          else
-            mv clam-chowder-Linux.AppImage release/clam-chowder-Linux.AppImage
           fi
         shell: bash
 
